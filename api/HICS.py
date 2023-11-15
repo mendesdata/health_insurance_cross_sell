@@ -88,5 +88,6 @@ class HICS( object ):
 
         # join pred into original data
         original_data['score'] = score_prediction[:,1].tolist()
+        original_data['negative_score'] = score_prediction[:,0].tolist()
 
         return original_data.to_json( orient='records', date_format='iso' )
