@@ -26,11 +26,13 @@ def hics_predict():
         else:
             df_test_raw = pd.DataFrame( test_json, columns=test_json[0].keys() )
 
+        df_raw = df_test_raw.copy()
+
         # Instanciate HICS Class
         pipeline = HICS()
 
         # data clening
-        df = pipeline.data_cleaning( df_test_raw )
+        df = pipeline.data_cleaning( df_raw )
 
         # feature enginering
         df = pipeline.feature_engineering( df )

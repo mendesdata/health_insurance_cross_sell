@@ -13,8 +13,25 @@ import json
 import math
 import datetime
 import os
+import inflection
 
 from  api.HICS import HICS
+
+
+# rename columns
+def rename_columns( df ):
+    title = lambda x: inflection.titleize( x )
+    snakecase = lambda x: inflection.underscore( x )
+    spaces = lambda x: x.replace(" ", "")
+
+    cols_old = list( df.columns )
+    cols_old = list( map( title, cols_old ) )
+    cols_old = list( map( spaces, cols_old ) )
+    cols_new = list( map( snakecase, cols_old ) )
+    
+    df.columns = cols_new
+
+    return df
 
 
 def load_data( file ):
@@ -80,10 +97,6 @@ def data_metrics( df ):
     
 def performance_curves( df ):
     with st.container():
-        #fig = px.bar( df, x='percentage', y='revenue_model', text='revenue_model') 
-        #fig.update_layout(title='Revenue Forecast Chart', xaxis_title='Interested Customers (%)', yaxis_title='Revenue (U$)' )
-        #st.plotly_chart( fig, use_container_width=True )
-
         y = df['response']
         yhat = []
 
@@ -91,7 +104,7 @@ def performance_curves( df ):
             aux = [ df.loc[i, 'negative_score'], df.loc[i, 'score'] ]
             yhat.append( aux )
 
-        st.markdown('### Ranking Curves')
+        st.markdown('#### Cumulative Gains and Lift Curves')
 
         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
         
@@ -100,6 +113,8 @@ def performance_curves( df ):
         skplt.metrics.plot_lift_curve( y, yhat, ax=axes[1], title='Lift Curve' )
 
         st.plotly_chart( fig, use_container_width=True )
+
+    return None
     
 def ranking_data( df, cost_per_customer, average_ticket ):
     df['ranking']        = df.index+1
@@ -169,18 +184,81 @@ def revenue_forecast_chart( df ):
         
     return None
 
-def customers_list( df, recall_at_k ):
-    aux = df[ df['recall'] <= recall_at_k].reset_index()
-
+def customers_list( df, perc ):
+    percentage = perc / 100
+    aux = df[ df['recall'] <= percentage].reset_index()
     max_rank = aux['ranking'].max()
 
     rank    = aux.loc[max_rank-1, 'ranking']
-    cost    = aux.loc[max_rank-1, 'cost']
-    revenue = aux.loc[max_rank-1, 'revenue']
+    cost    = aux.loc[max_rank-1, 'recall_cost']
+    revenue = aux.loc[max_rank-1, 'recall_revenue']
 
-    aux = aux[['ranking', 'id', 'age', 'gender', 'region_code']].rename( columns = {'id' : 'customer_id'} )
+    with st.container():
+        col1, col2 = st.columns ( 2, gap='small' )
 
-    return aux, rank, cost, revenue
+        with col1: 
+            # interested customers metric
+            value = int( percentage * df['response'].sum() )
+            st.metric( label='Interested Customers',  
+                       value='{:,.0f}'.format( value ), 
+                       delta='{:,.0f}'.format( perc )+'%', 
+                       help='Number of interested customers' )  
+
+            # customers contacted metric
+            delta = round( rank / df['id'].count() * 100, 2)
+            st.metric( label='Customers Contacted',  
+                       value='{:,.0f}'.format( rank ), 
+                       delta='{:,.2f}'.format( delta )+'%', 
+                       help='Number of customers contacted' )  
+            
+            # cost forecast metric
+            st.metric( label='Cost Forecast',  
+                       value='{:,.2f}'.format( cost ), 
+                       help='Amount of Predicted Cost' )  
+            
+            # revenue forecast metric
+            st.metric( label='Revenue Forecast',  
+                       value='{:,.2f}'.format( revenue ), 
+                       help='Amount of Predicted Revenue' )  
+
+        with col2: 
+            st.markdown('Customers List')
+            #aux = aux[['ranking', 'id', 'age', 'gender', 'region_code']].rename( columns = {'id' : 'customer_id'} )            
+            st.dataframe( aux, hide_index=True )
+
+    return None
+
+def customer_profile( df ):
+    with st.container():
+        col1, col2, col3 = st.columns( 3, gap='small' )
+
+        # old_age column
+        median_age = df['age'].median()
+        df['old_age'] = df['age'].apply( lambda x : 'over 36y' if x > median_age else 'until 36y' )   
+
+        df_pos_response = df[ df['response'] == 1]
+        df['response'] = 1
+
+        with col1:
+            #fig =go.Figure(go.Sunburst(df, path=['gender', 'old_age', 'vehicle_age'], values='response', textinfo='label+percent' ) )
+            fig = px.sunburst(df, path=['gender', 'old_age', 'vehicle_age'], values='response')
+            fig.update_traces(textinfo="label+percent root")
+            fig.update_layout(title='All Customers' )
+            st.plotly_chart( fig, use_container_width=True )
+
+        with col2:
+            fig = px.sunburst(df_pos_response, path=['gender', 'old_age', 'vehicle_age'], values='response')
+            fig.update_traces(textinfo="label+percent root")
+            fig.update_layout(title='Interested Customers' )
+            st.plotly_chart( fig, use_container_width=True )
+
+        with col3:
+            st.markdown('## Insights List')
+            st.markdown('**1.** **74% dos clientes interessados** no seguro automóvel possuem veículos com idade entre 1 e 2 anos. Esse grupo representa **54% do total de clientes**')
+            st.markdown('**2.** **45% dos clientes interessados** no seguro automóvel são do gênero masculino com idade acima dos 36 anos. Esse grupo representa **31% do total de clientes**')
+            st.markdown('**3.** Apenas **29% dos clientes interessados** no seguro automóvel possuem idade até os 36 anos. Este grupo representa **50% do total de clientes**')
+
+    return None
 
 # >>> Main Function
 def main():
@@ -190,29 +268,36 @@ def main():
     # create test dataset
     x_test = load_data( 'data/test.csv' )
 
+    x_test = rename_columns( x_test )
+
+    st.dataframe( x_test )
+
     st.title( 'Welcome to H.I.C.S Monitor' )
-    #st.markdown( subtitle )
+    st.markdown('### Health Insurance Cross Sell' )
 
     # sidebar area
     st.sidebar.markdown('# Filters')
 
     cost_per_customer = st.sidebar.number_input('Cost per contact')
     average_ticket    = st.sidebar.number_input('Average Ticket')
-    score_slider      = st.sidebar.slider('Target of interested customers', min_value=1, max_value=100 )
+
+    st.sidebar.markdown('# Customers List')
+    score_slider      = st.sidebar.slider('Target of interested customers (%):', min_value=1, max_value=100 )
    
     button = st.sidebar.button('Apply Model', type='primary')
 
     if button:
         df_score = apply_model( x_test )
+        st.dataframe( df_score )
+
         data_metrics( df_score )
         df_rank  = ranking_data( df_score, cost_per_customer, average_ticket )
-
-        st.dataframe( df_rank )
         
-        tab1, tab2, tab3, tab4 = st.tabs( [ 'Ranking Curves',
-                                            'Cost Forecast', 
-                                            'Revenue Forecast', 
-                                            'Proposed Goal'] )
+        tab1, tab2, tab3, tab4, tab5 = st.tabs( [ 'Ranking Curves',
+                                                  'Cost Forecast', 
+                                                  'Revenue Forecast', 
+                                                  'Customers List',
+                                                  'Insights: Customer Profile'] )
 
         with tab1: 
             performance_curves( df_score )
@@ -224,39 +309,10 @@ def main():
             revenue_forecast_chart( df_rank )            
 
         with tab4: 
-            df_customers, rank, cost, revenue  = customers_list( df_rank, score_slider/100 )
+            customers_list(df_rank, score_slider)
 
-            with st.container():
-                col1, col2 = st.columns ( 2, gap='small' )
-
-                with col1: 
-                    delta = round( rank / df_score['id'].count() * 100, 2)
-                    st.metric( label='Customers Contacted',  
-                               value='{:,.0f}'.format( rank ), 
-                               delta='{:,.2f}'.format( delta )+'%', 
-                               help='Number of customers contacted' )  
-                    
-                #with col2: 
-                    value = int( score_slider * 0.01 * df_score['response'].sum() )
-                    st.metric( label='Interested Customers',  
-                               value='{:,.0f}'.format( value ), 
-                               delta='{:,.0f}'.format( score_slider )+'%', 
-                               help='Number of interested customers' )  
-
-                #with col3: 
-                    st.metric( label='Cost Forecast',  
-                               value='{:,.2f}'.format( cost ), 
-                               help='Amount of Predicted Cost' )  
-                    
-                #with col4:
-                    st.metric( label='Revenue Forecast',  
-                               value='{:,.2f}'.format( revenue ), 
-                               help='Amount of Predicted Revenue' )  
-
-                with col2: 
-                    st.markdown('Customers List')
-                    st.dataframe( df_customers, hide_index=True )
-
+        with tab5:
+            customer_profile( df_score )
 
     return None
    
