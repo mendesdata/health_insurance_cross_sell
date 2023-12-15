@@ -57,7 +57,7 @@ As colunas da base de dados são:
 ### 2.2 Ferramentas e Métodos Utilizados
 - Python 3.11.5
 - Jupyter Notebook e VS Code
-- CRISP-DS
+- Metodologia CRISP-DS
 - Git e GitHub
 - Aprendizado Supervisionado - Classificação
 - Algoritmos: KNN, Logistic Regression, Extra Trees e LGBM Classifier
@@ -90,32 +90,93 @@ As colunas da base de dados são:
 
 ## 4. Análise de Dados
 
+A pesquisa encomendada foi realizada com **381.109** clientes dos planos de saúde da Seguradora. Destes, **46.710 (12,26%)** responderam que possuem interesse em adquirir o seguro de automóveis da Empresa. Os que não tem interesse totalizaram **334.399 (87,74%)**.
+
 ### 4.1 Distribuição dos Dados 
+
+Para efeito da geração do modelo de Machine Learning do projeto, os dados foram distribuídos em 3 grupos: Treino (80%), Validação (10%) e Teste (10%). Os clientes foram distribuídos nos grupos de forma proporcional a sua resposta do questionário. A tabela abaixo mostra os valores absolutos e percentuais de cada grupo. Os clientes interessados no seguro automóvel estão representados nas colunas (**Rows Positive Class**), enquanto que os não interessados na (**Rows Negative Class**)
+<img src="img/4_1_distribuicao_dados.png">
 
 ### 4.2 Hipóteses
 
+Foram levantadas hipóteses cujo objetivo era identificar em quais **características(features)** a proporção de clientes interessados no seguro automóvel apresentava uma variação significativa em comparação ao total de clientes entrevistados.
+
+* **Hipótese 1** : Clientes do sexo masculino possuem **MAIOR** interesse em adquirir o seguro automóvel.
+    * **Conclusão** : ***HIPÓTESE VERDADEIRA***, **61%** dos clientes interessados no seguro automóvel são do sexo masculino. Enquanto que o percentual geral de clientes do sexo masculino é de **54%**
+
+* **Hipótese 2** : Clientes mais velhos possuem **MAIOR** interesse em adquirir o seguro automóvel
+    * **Conclusão** : ***HIPÓTESE VERDADEIRA***, **71%** dos clientes interessados em adquirir o seguro automóvel possuem idade superior a mediana ( 36 anos ). Obviamente, o percentual geral de clientes com idade superior a mediana é **50%**. 
+
+* **Hipótese 3** : Clientes que possuem carros mais novos possuem **MAIOR** interesse em adquirir o seguro automóvel.
+
+
+
 ## 5. Modelos de Machine Learning
 
+Foram treinados 4 modelos de Machine Learning, considerando as condições a seguir:
+
+* **Learning to Rank** : As predições de cada modelo serão ordenadas do cliente com maior propensão ao cliente de menor propensão de adquirir o seguro automóvel.
+* **Medição das Predições** : Calcular o percentual de clientes interessados no seguro automóvel em relação ao percentual geral de clientes. Esses percentuais serão agrupados em faixas que vão de 10% a 100%, em intervalos de 10%.
+* **Métricas Utilizadas** : 
+    * **Recall_at_k** : Relação entre a quantidade acumulada de clientes interessados em adquirir o seguro automóvel e a quantidade total de clientes interessados em adquirir o seguro automóvel.
+    * **Curva de Ganho Acumulada** : Representação gráfica da relação entre o percentual de clientes interessados no seguro automóvel e o percentual geral de clientes.
+    * **Curva Lift** : Representação gráfica que demonstra em quantas vezes o modelo de predição do projeto é mais ou menos performático em relação a um modelo de escolhas aleatórias de clientes.
+* **Single Performance** : Predições realizadas sobre 20% da base de validação, escolhida de forma aleatória.
+* **Cross-Validation** : Predições realizadas sobre 100% da base de validação, fracionada em 5 partes iguais. O valor final será a média de cada faixa percentual.
+* **Seleção do Modelo** : Será considerado o melhor modelo aquele que conseguir identificar o maior percentual de clientes interessados no seguro automóvel com o menor percentual geral de clientes.
+* **Fine Tuning** : Realizar um ajuste fino nos hiperparâmetros do modelo final, de forma a encontrar a melhor configuração possível para o modelo.
+* **Apresentação dos Resultados** : A performance do modelo a partir das  métricas de negócio, projeções financeiras e insights de negócio serão apresentados aos stakeholders do projeto.
+
 ### 5.1 Modelos Utilizados
-- KNN - K-Nearest Neighbors
-- Regressão Logistica
-- Extra Trees
-- LightGBM - LGBM Classifier
+- K-Nearest Neighbors (KNN)
+- Regressão Logistica (RL)
+- Extra Trees (ET)
+- LightGBM - LGBM Classifier (LGBM)
 
 ### 5.2 Performance dos Modelos
+Todos os modelos apresentaram consistência no processo de aprendizagem e capacidade de generalizar o fenômeno estudado. A tabela a seguir, mostra a performance de cada modelo treinado.
 
-### 5.3 Performance dos Modelos - Cross Validation
+<img src="img/5_2_performance_modelos.png">
 
-### 5.4 Modelo Final - Fine Tuning
+A coluna **perc_customers** indica o percentual geral de clientes. As colunas posteriores representam o percentual que cada modelo projeta que captará de clientes interessados no seguro automóvel. Observamos que até as faixas de 50% de clientes, o **modelo LGBM** atinge os maiores percentuais.
+Por exemplo: Para atingir 91% de novos clientes seria necessário contactar 40% do total de clientes que participaram da pesquisa.
+
+A curva de ganho acumulada de cada modelo confirma os valores apresentados na tabela anterior. 
+
+<img src="img/5_2_curva_ganho_modelos.png">
+
+Observamos que a curva do modelo LGBM é a mais acentuada em relação aos eixos, significa que ela atinge o maior número de clientes novos (eixo y) com a menor quantidade de clientes em geral (eixo x).
+
+### 5.3 Modelo Final - Fine Tuning
 
 
 ## 6. Resultados de Negócio
 
 ### 6.1 Insights 
 
+Os insights extraídos pela análise de dados identificaram um perfil de cliente que deseja adquirir o seguro automóvel. Ele, de forma geral, é do gênero masculino, com idade superior a 36 anos e seu veículo possui entre 1 e 2 anos de uso. 
+
+**1.** **74%** dos clientes interessados no seguro automóvel possuem veículos com idade entre 1 e 2 anos. Esse grupo representa **54%** do total de clientes
+
+**2.** **45%** dos clientes interessados no seguro automóvel são do gênero masculino com idade acima dos 36 anos. Esse grupo representa **31%** do total de clientes
+
+**3.** Apenas **29%** dos clientes interessados no seguro automóvel possuem idade até os 36 anos. Este grupo representa **50%** do total de clientes
+
+<img src="img/6_1_insights.png">
+
 ### 6.2 Curva de Ganho Acumulado
 
+A curva de ganho acumulado permite visualizar graficamente qual o percentual de clientes contactados necessário (eixo X), para conseguir captar um determinado percentual de clientes interessados no seguro automóvel (eixo Y). Observe que entrando em contato com 20% dos clientes é possível captar quase 60% dos clientes interessados. 
+
+<img src="img/6_2_curva_ganho_modelo.png">
+
 ### 6.3 Curva Lift
+
+O objetivo da Curva Lift é comparar a performance do modelo deste projeto com um modelo de escolhas aleatórias de clientes. O Modelo do Projeto está representado pela linha laranja, enquanto que o modelo aleatório pelo ponto tracejado. O eixo X representa o percentual total de clientes entrevistados, o eixo Y representa o número de vezes em que o modelo do projeto é mais performático que o modelo aleatório. Observe que a performance do modelo aleatório é sempre constante (igual a 1). Já o modelo do projeto é praticamente 3 vezes mais performático quando o percentual de clientes está em 20%, 2,5 vezes quando o total de clientes está em 40% e 2 vezes quando está em 50%. 
+
+Um modelo que performa 2,5 vezes mais que outro, significa que custará 2,5 menos, que proverá 2,5 mais receitas. Os gráficos de previsão de custos e receitas mostrarão essas diferenças em valores absolutos. 
+
+<img src="img/6_3_curva_lift_modelo.png">
 
 ### 6.4 Previsão de Custos
 
@@ -123,6 +184,10 @@ As colunas da base de dados são:
 
 ## 7. Conclusões
 
-## 8. Lições Aprendidas
+O modelo apresentou em todas as métricas desempenho muito superior ao modelo aleatório, justificando o investimento nesse tipo de solução. 
 
-## 9. Próximos Passos
+Somente com os insights gerados a partir dos de clientes já seria possível atingir 74% de interessados entrando em contato com 54% do total de clientes.
+
+## 8. Próximos Passos
+
+Implementar o modelo em Cloud com MLOps e banco de dados.

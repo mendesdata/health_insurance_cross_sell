@@ -194,7 +194,7 @@ def customers_list( df, perc ):
     revenue = aux.loc[max_rank-1, 'recall_revenue']
 
     with st.container():
-        col1, col2 = st.columns ( 2, gap='small' )
+        col1, col2, col3, col4, col5 = st.columns ( 5, gap='small' )
 
         with col1: 
             # interested customers metric
@@ -203,28 +203,28 @@ def customers_list( df, perc ):
                        value='{:,.0f}'.format( value ), 
                        delta='{:,.0f}'.format( perc )+'%', 
                        help='Number of interested customers' )  
-
+        with col2:
             # customers contacted metric
             delta = round( rank / df['id'].count() * 100, 2)
             st.metric( label='Customers Contacted',  
                        value='{:,.0f}'.format( rank ), 
                        delta='{:,.2f}'.format( delta )+'%', 
                        help='Number of customers contacted' )  
-            
+        with col3:
             # cost forecast metric
             st.metric( label='Cost Forecast',  
                        value='{:,.2f}'.format( cost ), 
                        help='Amount of Predicted Cost' )  
-            
+        with col4:
             # revenue forecast metric
             st.metric( label='Revenue Forecast',  
                        value='{:,.2f}'.format( revenue ), 
                        help='Amount of Predicted Revenue' )  
 
-        with col2: 
+        with col5: 
             st.markdown('Customers List')
             #aux = aux[['ranking', 'id', 'age', 'gender', 'region_code']].rename( columns = {'id' : 'customer_id'} )            
-            st.dataframe( aux, hide_index=True )
+            #st.dataframe( aux, hide_index=True )
 
     return None
 
@@ -267,10 +267,7 @@ def main():
 
     # create test dataset
     x_test = load_data( 'data/test.csv' )
-
     x_test = rename_columns( x_test )
-
-    st.dataframe( x_test )
 
     st.title( 'Welcome to H.I.C.S Monitor' )
     st.markdown('### Health Insurance Cross Sell' )
@@ -288,7 +285,6 @@ def main():
 
     if button:
         df_score = apply_model( x_test )
-        st.dataframe( df_score )
 
         data_metrics( df_score )
         df_rank  = ranking_data( df_score, cost_per_customer, average_ticket )
@@ -304,6 +300,7 @@ def main():
 
         with tab2: 
             cost_forecast_chart( df_rank )   
+            customers_list(df_rank, score_slider)
 
         with tab3:
             revenue_forecast_chart( df_rank )            
