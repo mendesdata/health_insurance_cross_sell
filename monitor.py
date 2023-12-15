@@ -123,10 +123,10 @@ def ranking_data( df, cost_per_customer, average_ticket ):
 
     df['recall']         = round( df['response'].cumsum() / df['response'].sum(), 4 )
     df['recall_cost']    = round( df['ranking'] * cost_per_customer, 2)
-    df['recall_revenue'] = round( df['response'].sum() * df['recall'] * average_ticket, 2)
+    df['recall_revenue'] = ( df['response'].sum() * df['recall'] * average_ticket ).astype( int )
 
     df['random_cost']    = round( df['ranking'] * cost_per_customer, 2 ) 
-    df['random_revenue'] = round( df['ranking'] / df['id'].count() * df['response'].sum() * average_ticket, 2 ) 
+    df['random_revenue'] = ( df['ranking'] / df['id'].count() * df['response'].sum() * average_ticket ).astype( int )
 
     return df
 
@@ -303,7 +303,8 @@ def main():
             customers_list(df_rank, score_slider)
 
         with tab3:
-            revenue_forecast_chart( df_rank )            
+            revenue_forecast_chart( df_rank )    
+            customers_list(df_rank, score_slider)        
 
         with tab4: 
             customers_list(df_rank, score_slider)

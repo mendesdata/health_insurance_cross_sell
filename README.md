@@ -21,6 +21,21 @@
 
 **requirements.txt** : contém as bibliotecas do python necessárias para a execuçao do projeto. Essas bibliotecas precisam ser instaladas no seu ambiente. Para isso, acesse o terminal do seu Sistema Operacional, entre no diretório raiz deste projeto e digite: "pip install -r requirements.txt". .
 
+## Planejamento da Solução
+
+<img src="img/planejamento_solucao.png">
+
+01. **Especificação da Questão de Negócio**: Delimitar o escopo do projeto, quem são os interessados, as premissas, os objetivos.
+02. **Coleta e Tratamento de Dados**: Verificar se há dados faltantes, duplicados ou inconsistentes.
+03. **Análise Descritiva dos Dados**: Visualizar métricas de tendência central, frequência e distribuição dos dados.
+04. **Elaboração de Hipóteses de Negócio**: Criar a partir do dados originais, dados derivados ou conhecimento empírico afirmações (hipóteses) sobre o fenômeno estudado.
+05. **Análise Exploratória dos Dados**: Validar ou invalidar as hipóteses levantadas no passo anterior, a partir das análises da relações e correlações das variáveis do modelo. Além disso, gerar insights que possam ser convertidos em retorno financeiro para a Empresa.
+06. **Preparação e Seleção dos Atributos**: Utilizar técnicas e ferramentas que permitam que os dados representem o fenômeno estudado.
+07. **Geração de Modelos de Machine Learning**: Criar, treinar e validar modelos que permitam responder às perguntas de negócios, utilizando métricas de performance para escolha do melhor modelo
+08. **Aprimoramento do Modelo**: Ajustar os parâmetros do modelo selecionado para obtenção de melhor performance.
+09. **Comunicação dos Resultados aos Stakeholders**: Apresentar as métricas que comprovam a eficiência da aplicação do modelo,  demonstrar as previsões do modelo e responder às perguntas de negócio. Apresentar também, as lições aprendidas e os próximos passos do projeto.
+10. **Deploy do Modelo**: Colocar o modelo em ambiente de produção para que possa ser consumido e abastecido com novos dados.
+
 
 ## 1. Questão de Negócio
 
@@ -56,11 +71,12 @@ As colunas da base de dados são:
 
 ### 2.2 Ferramentas e Métodos Utilizados
 - Python 3.11.5
+- Aprendizado Supervisionado - Classificação
+- Algoritmos: KNN, Logistic Regression, Extra Trees e LGBM Classifier
 - Jupyter Notebook e VS Code
 - Metodologia CRISP-DS
 - Git e GitHub
-- Aprendizado Supervisionado - Classificação
-- Algoritmos: KNN, Logistic Regression, Extra Trees e LGBM Classifier
+
 
 ### 2.3 Restrições
 * Por se tratar de uma Empresa com milhões de clientes, há uma limitação operacional da equipe atendimento ao cliente. Portanto, o produto de dados deve potencializar esse recurso.
@@ -76,19 +92,7 @@ As colunas da base de dados são:
 06. Faça as mesmas previsões dos dois itens anteriores considerando um percentual específico de clientes que comprarão o seguro de automóveis. Informe o número e o percentual de clientes contactados para o atingimento desta meta. Crie uma listagem que identifique esses clientes.
 07. Que insights obtidos pela análise de dados podem contribuir para o negócio da empresa ?
 
-## 3. Planejamento da Solução
-01. **Especificação da Questão de Negócio**: Delimitar o escopo do projeto, quem são os interessados, as premissas, os objetivos.
-02. **Coleta e Tratamento de Dados**: Verificar se há dados faltantes, duplicados ou inconsistentes.
-03. **Análise Descritiva dos Dados**: Visualizar métricas de tendência central, frequência e distribuição dos dados.
-04. **Elaboração de Hipóteses de Negócio**: Criar a partir do dados originais, dados derivados ou conhecimento empírico afirmações (hipóteses) sobre o fenômeno estudado.
-05. **Análise Exploratória dos Dados**: Validar ou invalidar as hipóteses levantadas no passo anterior, a partir das análises da relações e correlações das variáveis do modelo. Além disso, gerar insights que possam ser convertidos em retorno financeiro para a Empresa.
-06. **Preparação e Seleção dos Atributos**: Utilizar técnicas e ferramentas que permitam que os dados representem o fenômeno estudado.
-07. **Geração de Modelos de Machine Learning**: Criar, treinar e validar modelos que permitam responder às perguntas de negócios, utilizando métricas de performance para escolha do melhor modelo
-08. **Aprimoramento do Modelo**: Ajustar os parâmetros do modelo selecionado para obtenção de melhor performance.
-09. **Comunicação dos Resultados aos Stakeholders**: Apresentar as métricas que comprovam a eficiência da aplicação do modelo,  demonstrar as previsões do modelo e responder às perguntas de negócio. Apresentar também, as lições aprendidas e os próximos passos do projeto.
-10. **Deploy do Modelo**: Colocar o modelo em ambiente de produção para que possa ser consumido e abastecido com novos dados.
-
-## 4. Análise de Dados
+## 3. Análise de Dados
 
 A pesquisa encomendada foi realizada com **381.109** clientes dos planos de saúde da Seguradora. Destes, **46.710 (12,26%)** responderam que possuem interesse em adquirir o seguro de automóveis da Empresa. Os que não tem interesse totalizaram **334.399 (87,74%)**.
 
@@ -110,8 +114,7 @@ Foram levantadas hipóteses cujo objetivo era identificar em quais **caracterís
 * **Hipótese 3** : Clientes que possuem carros mais novos possuem **MAIOR** interesse em adquirir o seguro automóvel.
 
 
-
-## 5. Modelos de Machine Learning
+## 4. Modelos de Machine Learning
 
 Foram treinados 4 modelos de Machine Learning, considerando as condições a seguir:
 
@@ -127,13 +130,13 @@ Foram treinados 4 modelos de Machine Learning, considerando as condições a seg
 * **Fine Tuning** : Realizar um ajuste fino nos hiperparâmetros do modelo final, de forma a encontrar a melhor configuração possível para o modelo.
 * **Apresentação dos Resultados** : A performance do modelo a partir das  métricas de negócio, projeções financeiras e insights de negócio serão apresentados aos stakeholders do projeto.
 
-### 5.1 Modelos Utilizados
+### 4.1 Modelos Utilizados
 - K-Nearest Neighbors (KNN)
 - Regressão Logistica (RL)
 - Extra Trees (ET)
 - LightGBM - LGBM Classifier (LGBM)
 
-### 5.2 Performance dos Modelos
+### 4.2 Performance dos Modelos
 Todos os modelos apresentaram consistência no processo de aprendizagem e capacidade de generalizar o fenômeno estudado. A tabela a seguir, mostra a performance de cada modelo treinado.
 
 <img src="img/5_2_performance_modelos.png">
@@ -147,12 +150,12 @@ A curva de ganho acumulada de cada modelo confirma os valores apresentados na ta
 
 Observamos que a curva do modelo LGBM é a mais acentuada em relação aos eixos, significa que ela atinge o maior número de clientes novos (eixo y) com a menor quantidade de clientes em geral (eixo x).
 
-### 5.3 Modelo Final - Fine Tuning
+### 4.3 Modelo Final - Fine Tuning
 
 
-## 6. Resultados de Negócio
+## 5. Resultados de Negócio
 
-### 6.1 Insights 
+### 5.1 Insights 
 
 Os insights extraídos pela análise de dados identificaram um perfil de cliente que deseja adquirir o seguro automóvel. Ele, de forma geral, é do gênero masculino, com idade superior a 36 anos e seu veículo possui entre 1 e 2 anos de uso. 
 
@@ -164,13 +167,13 @@ Os insights extraídos pela análise de dados identificaram um perfil de cliente
 
 <img src="img/6_1_insights.png">
 
-### 6.2 Curva de Ganho Acumulado
+### 5.2 Curva de Ganho Acumulado
 
 A curva de ganho acumulado permite visualizar graficamente qual o percentual de clientes contactados necessário (eixo X), para conseguir captar um determinado percentual de clientes interessados no seguro automóvel (eixo Y). Observe que entrando em contato com 20% dos clientes é possível captar quase 60% dos clientes interessados. 
 
 <img src="img/6_2_curva_ganho_modelo.png">
 
-### 6.3 Curva Lift
+### 5.3 Curva Lift
 
 O objetivo da Curva Lift é comparar a performance do modelo deste projeto com um modelo de escolhas aleatórias de clientes. O Modelo do Projeto está representado pela linha laranja, enquanto que o modelo aleatório pelo ponto tracejado. O eixo X representa o percentual total de clientes entrevistados, o eixo Y representa o número de vezes em que o modelo do projeto é mais performático que o modelo aleatório. Observe que a performance do modelo aleatório é sempre constante (igual a 1). Já o modelo do projeto é praticamente 3 vezes mais performático quando o percentual de clientes está em 20%, 2,5 vezes quando o total de clientes está em 40% e 2 vezes quando está em 50%. 
 
@@ -178,16 +181,30 @@ Um modelo que performa 2,5 vezes mais que outro, significa que custará 2,5 meno
 
 <img src="img/6_3_curva_lift_modelo.png">
 
-### 6.4 Previsão de Custos
+### 5.4 Previsão de Custos
 
-### 6.5 Previsão de Receitas
+O gráfico abaixo compara o modelo deste projeto com o modelo aleatório, mostrando qual seria o custo total para cada faixa de clientes interessados.
+Por exemplo, seria possível captar **80%** dos clientes interessados gastando algo em torno de **58K**. Já no modelo aleatório, para atingir esse mesmo percentual de clientes interessados seriam gastos **152K**, ou seja, **2,6** vezes a mais em relação ao modelo do projeto.
 
-## 7. Conclusões
+Para o cálculo dos valores foi considerado o custo unitário em U$5.0
 
-O modelo apresentou em todas as métricas desempenho muito superior ao modelo aleatório, justificando o investimento nesse tipo de solução. 
+<img src="img/grafico_previsao_custos.png">
+
+### 5.5 Previsão de Receitas
+
+O gráfico abaixo compara o modelo deste projeto com o modelo aleatório, mostrando qual seria a receita total obtida para cada faixa de clientes contactados. 
+Por exemplo, a receita obtida ao entrar em contato com **30%** do total geral de clientes seria de ***445K** para o modelo deste projeto. Já no modelo aleatório, o mesmo percentual de clientes obteria a receita de **168K**, ou seja, uma diferença de **2,64** vezes a menos em relação ao modelo do projeto.
+
+Para o cálculo dos valores foi considerado um ticket médio em U$120.0
+
+<img src="img/grafico_previsao_receitas.png">
+
+## 6. Conclusões
+
+O modelo apresentou desempenho entre 2 a 3 vezes superior em comparação ao modelo aleatório, justificando o investimento nesse tipo de solução. 
 
 Somente com os insights gerados a partir dos de clientes já seria possível atingir 74% de interessados entrando em contato com 54% do total de clientes.
 
-## 8. Próximos Passos
+## 7. Próximos Passos
 
-Implementar o modelo em Cloud com MLOps e banco de dados.
+Implementar o modelo em Cloud com ETL, banco de dados e MLOps.
